@@ -1,60 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
+
   <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
-  <body ng-app="directoryApp">
+
+  <body class="pageBackground" ng-app="directoryApp">
+
+  <br>
+
     <div class="container">
-      <div class="row">
-        <h1>UF Directory App</h1>
+
+      <div class="row" style="background:#DC661E" >
+        <h1 class="header">UF Directory App</h1>
       </div>
+
       <div class="row" ng-controller="ListingsController">
+
         <div class="col-md-6">
+
           <div class="input-group" id="searchBar">
-            <!-- 
-
-                Implement a way to filter through listings using the search bar 
-
+            <!--
+                Implement a way to filter through listings using the search bar
               -->
-            <span class="input-group-addon" id="sizing-addon1"><span class="glyphicon glyphicon-search"></span></span>
-            <input type="text" class="form-control" placeholder="Search">
+            <span class="input-group-addon" id="sizing-addon1" style="background-color:#EFAD4D">
+              <span class="glyphicon glyphicon-search" style="color: black"></span>
+            </span>
+            <input type="text" class="form-control" placeholder="Search" ng-model="search"/>
           </div>
+
           <div class="tableWrapper">
             <table class="table table-striped table-hover">
               <tr>
-                <th>Code</th>
-                <th>Building Name</th>
+                <th class="unselectable" ng-click="order('code')" style="width: 70px">
+                  Code
+                  <span class="sortorder" ng-show="predicate === 'code'" ng-class="{reverse:reverse}"></span>
+                </th>
+                <th class="unselectable" ng-click="order('name')">
+                  Building Name
+                  <span class="sortorder" ng-show="predicate === 'name'" ng-class="{reverse:reverse}"></span>
+                </th>
                 <th></th>
               </tr>
-              <!-- 
-
+              <!--
                   Fill in the rest of the table:
                       * populate the rows with the code and name of each listing
                       * include a way to remove individual listings
+                -->
+              <tr ng-click="showDetails(listings.indexOf(entries))" ng-repeat="entries in listings | orderBy:predicate:reverse| filter:search" style="color: black">
+                <td>{{entries.code}}</td>
+                <td>{{entries.name}}</td>
+                <td>
+                  <div style="text-align: right">
+                    <button type="submit" class="btn btn-warning" ng-click="deleteListing(listings.indexOf(entries))">
+                      <span class="glyphicon glyphicon-remove" style="color: black;"></span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
 
-                --> 
             </table>
           </div>
-          <!-- 
-
-              Write an HTML form that adds new listings to the directory 
-
-            -->
         </div>
-        <div class="col-md-6">
-          <div class="jumbotron">
-            <h2>Detailed Information</h2>
-            <!-- 
 
+        <br>
+
+        <div class="col-md-6">
+            <div class="jumbotron">
+            <h2>Detailed Information</h2>
+            <!--
               Include a way to display detailed information about an individual listing:
                    * consider how to use ng-click within the the table to implement this feature
-
              -->
+            <p><b>Code: </b>{{listings[ind].code}}</p>
+            <p><b>Building Name: </b>{{listings[ind].name}}</p>
+            <p><b>Address: </b>{{listings[ind].address}}</p>
+            <p><b>Longitude: </b>{{listings[ind].coordinates.longitude}}</p>
+            <p><b>Latitude: </b>{{listings[ind].coordinates.latitude}}</p>
+          </div>
+
+          <!--
+      Write an HTML form that adds new listings to the directory
+    -->
+          <!-- Button trigger modal -->
+          <div style="text-align: center">
+            <button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target="#myModal" style="color: black">
+              Add a new listing
+            </button>
           </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add new listing</h4>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div>
+                    <h3>Listing information</h3>
+                    Code: <input type="text" class="form-control" ng-model="code"/>
+                    Building Name: <input type="text" class="form-control" ng-model="name"/>
+                    Address: <input type="text" class="form-control" ng-model="address"/>
+                    Longitude: <input type="text" class="form-control" ng-model="longitude"/>
+                    Latitude: <input type="text" class="form-control" ng-model="latitude"/>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="addListing()" data-dismiss="modal">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
     <script src="https://code.angularjs.org/1.4.3/angular.js"></script>
